@@ -561,9 +561,21 @@ export function writeFHIRResources(
         )
       ) {
         checkNullValuesOnArray(resource);
-        fs.outputJSONSync(path.join(exportDir, resource.getFileName()), resource.toJSON(snapshot), {
-          spaces: 2
-        });
+        const replacer = (key: any, value: string) => {
+          if (typeof value === "string" && !isNaN(Number(value))) {
+            // Format the number while keeping the exact number of zeros after the decimal point
+            const numValue = Number(value);
+            return value.includes('.') ? numValue.toFixed(value.split('.')[1].length) : numValue;
+          }
+          return value;
+        };
+        const jsonString = JSON.stringify(resource.toJSON(snapshot), replacer, 2);
+
+        // Manually format the JSON string to maintain number type with precision
+        const formattedJsonString = jsonString.replace(/"(\d+\.\d+)"|"\d+"/g, (match) => match.replace(/"/g, ''));
+
+        // Write the modified JSON string directly to a file
+        fs.outputFileSync(path.join(exportDir, resource.getFileName()), formattedJsonString);
         count++;
       } else {
         logger.error(

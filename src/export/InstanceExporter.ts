@@ -188,13 +188,15 @@ export class InstanceExporter implements Fishable {
             value = `#${matchingContainedReferenceId}`;
           }
         }
+        let rawValue = (rule instanceof AssignmentRule) ? rule.rawValue : null
         const validatedRule = instanceOfStructureDefinition.validateValueAtPath(
           rule.path,
           value,
           this.fisher,
           inlineResourceTypes,
           rule.sourceInfo,
-          manualSliceOrdering
+          manualSliceOrdering,
+          rawValue
         );
         // Record each valid rule in a map
         // Choice elements on an instance must use a specific type, so if the path still has an unchosen choice element,

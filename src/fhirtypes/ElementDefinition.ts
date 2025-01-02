@@ -1832,7 +1832,7 @@ export class ElementDefinition {
    * @throws {ValueAlreadyAssignedError} when the value is already assigned to a different value
    * @throws {MismatchedTypeError} when the value does not match the type of the ElementDefinition
    */
-  assignValue(value: AssignmentValueType, exactly = false, fisher?: Fishable): void {
+  assignValue(value: AssignmentValueType, exactly = false, fisher?: Fishable, rawValue: any = null): void {
     let type: string;
     if (value instanceof FshCode) {
       type = 'Code';
@@ -1872,7 +1872,7 @@ export class ElementDefinition {
         this.assignFHIRValue(value.toString(), value, exactly, 'boolean');
         break;
       case 'number':
-        this.assignNumber(value as number, exactly);
+        this.assignNumber(value as number, exactly, rawValue);
         break;
       case 'string':
         this.assignString(value as string, exactly);
@@ -2255,14 +2255,17 @@ export class ElementDefinition {
    * @throws {ValueAlreadyAssignedError} when the value is already assigned to a different value
    * @throws {MismatchedTypeError} when the value does not match the type of the ElementDefinition
    */
-  private assignNumber(value: number | bigint, exactly = false): void {
+  private assignNumber(value: number | bigint, exactly = false, rawValue: any = null): void {
     const type = this.type[0].code;
     const valueAsNumber = Number(value);
-    if (
-      type === 'decimal' ||
-      (type === 'integer' && Number.isInteger(valueAsNumber)) ||
-      (type === 'unsignedInt' && Number.isInteger(valueAsNumber) && valueAsNumber >= 0) ||
-      (type === 'positiveInt' && Number.isInteger(valueAsNumber) && valueAsNumber > 0)
+    // In case of 
+    if (type === 'decimal' && !isNaN(Number(rawValue)) && /^\d+\.0+$/.test(rawValue)) {
+      this.assignFHIRValue(rawValue.toString(), rawValue.toString(), exactly, type);
+    } else if (
+        type === 'decimal' ||
+        (type === 'integer' && Number.isInteger(valueAsNumber)) ||
+        (type === 'unsignedInt' && Number.isInteger(valueAsNumber) && valueAsNumber >= 0) ||
+        (type === 'positiveInt' && Number.isInteger(valueAsNumber) && valueAsNumber > 0)
     ) {
       this.assignFHIRValue(value.toString(), valueAsNumber, exactly, type);
     } else if (type === 'integer64' && typeof value === 'bigint') {

@@ -600,7 +600,8 @@ export class StructureDefinition {
     fisher: Fishable,
     inlineResourceTypes: string[] = [],
     sourceInfo: SourceInfo = null,
-    manualSliceOrdering = false
+    manualSliceOrdering = false,
+    rawValue: any = null
   ): { assignedValue: any; pathParts: PathPart[]; childPath?: string } {
     const pathParts = parseFSHPath(path);
     let currentPath = '';
@@ -780,7 +781,7 @@ export class StructureDefinition {
       // assignValue will throw if it fails, but skip the check if value is null
       if (value != null) {
         // exactly must be true so that we always test assigning with the more strict fixed[x] approach
-        currentElement.assignValue(value, true, fisher);
+        currentElement.assignValue(value, true, fisher, rawValue);
       }
       // If there is a fixedValue or patternValue, find it and return it
       const key = Object.keys(currentElement).find(
