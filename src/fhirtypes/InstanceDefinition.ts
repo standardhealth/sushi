@@ -26,7 +26,9 @@ export class InstanceDefinition {
   getFileName(): string {
     // Logical instances should use Binary type. See: https://fshschool.org/docs/sushi/tips/#instances-of-logical-models
     const type = this._instanceMeta.sdKind === 'logical' ? 'Binary' : this.resourceType;
-    return sanitize(`${type}-${this.id ?? this._instanceMeta.name}.json`, {
+    const versionString = this._instanceMeta.versionId ? `_v${this._instanceMeta.versionId}` : '';
+    const filename = `${type}-${this.id ?? this._instanceMeta.name}${versionString}.json`;
+    return sanitize(filename, {
       replacement: '-'
     });
   }
@@ -62,6 +64,7 @@ type InstanceMeta = {
   sdType?: string;
   sdKind?: string;
   instanceOfUrl?: string;
+  versionId?: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

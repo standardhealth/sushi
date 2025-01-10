@@ -10,6 +10,7 @@ export class Instance extends FshEntity {
   instanceOf: string;
   description?: string;
   usage?: InstanceUsage;
+  versionId?: string;
   rules: (AssignmentRule | InsertRule | PathRule)[];
 
   constructor(public name: string) {
@@ -17,6 +18,7 @@ export class Instance extends FshEntity {
     this.id = name; // init same as name
     this.rules = [];
     this.usage = 'Example'; // init to Example (default)
+    this.versionId = undefined; // init to undefined (default)
   }
 
   get constructorName() {

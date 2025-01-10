@@ -410,6 +410,46 @@ describe('FSHImporter', () => {
         );
         expect(loggerSpy.getLastMessage('error')).toMatch(/File: File2\.fsh.*Line: 2 - 4\D*/s);
       });
+
+      it('should not produce an error when encountering an instance with a name used by another instance in another file but has a unique versionId', () => {
+        const input1 = `
+          Instance: SomeInstance
+          InstanceOf: Patient
+          Title: "Instance"
+          * meta
+          * meta.versionId = "1"
+        `;
+
+        const input2 = `
+          Instance: SomeInstance
+          InstanceOf: Patient
+          Title: "Instance"
+          * meta
+          * meta.versionId = "2"
+        `;
+
+        const input3 = `
+          Instance: SomeInstance
+          InstanceOf: Patient
+          Title: "Instance"
+        `;
+
+        const result = importText([
+          new RawFSH(input1, 'File1.fsh'),
+          new RawFSH(input2, 'File2.fsh'),
+          new RawFSH(input3, 'File2.fsh')
+        ]);
+        expect(result.reduce((sum, d2) => sum + d2.instances.size, 0)).toBe(3);
+        const instance1 = result[0].instances.get('SomeInstance');
+        const instance2 = result[1].instances.get('SomeInstance');
+        const instance3 = result[2].instances.get('SomeInstance');
+        expect(instance1.title).toBe('Instance');
+        expect(instance1.versionId).toBe('1');
+        expect(instance1.title).toBe('Instance');
+        expect(instance2.versionId).toBe('2');
+        expect(instance3.title).toBe('Instance');
+        expect(instance3.versionId).toBe(undefined);
+      });
     });
   });
 });
