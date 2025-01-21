@@ -1675,7 +1675,7 @@ describe('Processing', () => {
     it('should create text and json index files that contain each resource in the package', () => {
       writeFSHIndex(tempIGPubRoot, outPackage, fshRoot, []);
       const textIndex = path.join(tempIGPubRoot, 'fsh-generated', 'fsh-index.txt');
-      const jsonIndex = path.join(tempIGPubRoot, 'fsh-generated', 'fsh-index.json');
+      const jsonIndex = path.join(tempIGPubRoot, 'fsh-generated', 'data', 'fsh-index.json');
       expect(fs.existsSync(textIndex)).toBeTrue();
       expect(fs.existsSync(jsonIndex)).toBeTrue();
 
@@ -1734,7 +1734,7 @@ describe('Processing', () => {
     it('should sort the list of resources by output file name', () => {
       writeFSHIndex(tempIGPubRoot, outPackage, fshRoot, []);
       const textIndex = path.join(tempIGPubRoot, 'fsh-generated', 'fsh-index.txt');
-      const jsonIndex = path.join(tempIGPubRoot, 'fsh-generated', 'fsh-index.json');
+      const jsonIndex = path.join(tempIGPubRoot, 'fsh-generated', 'data', 'fsh-index.json');
       expect(fs.existsSync(textIndex)).toBeTrue();
       expect(fs.existsSync(jsonIndex)).toBeTrue();
 
@@ -1757,7 +1757,7 @@ describe('Processing', () => {
     it('should not include a resource in the package if it is in the list of resources to skip', () => {
       writeFSHIndex(tempIGPubRoot, outPackage, fshRoot, ['StructureDefinition-my-extension.json']);
       const textIndex = path.join(tempIGPubRoot, 'fsh-generated', 'fsh-index.txt');
-      const jsonIndex = path.join(tempIGPubRoot, 'fsh-generated', 'fsh-index.json');
+      const jsonIndex = path.join(tempIGPubRoot, 'fsh-generated', 'data', 'fsh-index.json');
       expect(fs.existsSync(textIndex)).toBeTrue();
       expect(fs.existsSync(jsonIndex)).toBeTrue();
 

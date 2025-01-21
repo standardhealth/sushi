@@ -632,8 +632,9 @@ export function writeFSHIndex(
   // write txt with nice formatting
   textIndex.unshift(['Output File', 'Name', 'Type', 'FSH File', 'Lines']);
   fs.outputFileSync(path.join(outDir, 'fsh-generated', 'fsh-index.txt'), table(textIndex));
-  // write json for machine usage
-  fs.outputJsonSync(path.join(outDir, 'fsh-generated', 'fsh-index.json'), jsonIndex, { spaces: 2 });
+  // write json for machine usage. Use the fsh-generated/data folder for the template to pick it up. Ensure the folder exists
+  fs.ensureDirSync(path.join(outDir, 'fsh-generated', 'data'));
+  fs.outputJsonSync(path.join(outDir, 'fsh-generated', 'data', 'fsh-index.json'), jsonIndex, { spaces: 2 });
 }
 
 export function writePreprocessedFSH(outDir: string, inDir: string, tank: FSHTank) {
